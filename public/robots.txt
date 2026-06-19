@@ -1,0 +1,9 @@
+# Robots.txt - SEO crawler directives for Online Timing Suite
+User-agent: *
+Allow: /
+Allow: /#stopwatch
+Allow: /#timer
+Allow: /#clock
+
+# Sitemap reference
+Sitemap: https://ais-pre-n5o3242gqldtsz7pk5dk3g-479031763424.asia-southeast1.run.app/sitemap.xml

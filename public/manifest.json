@@ -1,0 +1,11 @@
+{
+  "short_name": "Timing Suite",
+  "name": "Online Stopwatch, Timer & Clock Suite",
+  "icons": [],
+  "start_url": "/#stopwatch",
+  "background_color": "#020617",
+  "theme_color": "#4f46e5",
+  "display": "standalone",
+  "orientation": "any",
+  "description": "An ultra-precise, web-engineered stopwatch, countdown timer, and international multi-zone timezone coordinator with high-performance tracking and custom export parameters."
+}

@@ -1,0 +1,6 @@
+{
+  "name": "Online Stopwatch, Timer & Clock",
+  "description": "A highly accurate, interactive online stopwatch, countdown timer, and world clock timezone suite optimized for productivity, study, and global timing needs.",
+  "requestFramePermissions": [],
+  "majorCapabilities": ["MAJOR_CAPABILITY_SERVER_SIDE_GEMINI_API"]
+}
