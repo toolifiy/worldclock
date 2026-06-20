@@ -28,14 +28,14 @@ class AudioEngine {
       osc.type = 'triangle';
       osc.frequency.setValueAtTime(1200, this.ctx.currentTime); // Crispy short tick
       
-      gain.gain.setValueAtTime(0.15, this.ctx.currentTime); // Boosted for clean audibility
-      gain.gain.exponentialRampToValueAtTime(0.001, this.ctx.currentTime + 0.04);
+      gain.gain.setValueAtTime(0.70, this.ctx.currentTime); // Boosted significantly for loud, clear audibility
+      gain.gain.exponentialRampToValueAtTime(0.001, this.ctx.currentTime + 0.06); // Extended duration slightly for body
       
       osc.connect(gain);
       gain.connect(this.ctx.destination);
       
       osc.start();
-      osc.stop(this.ctx.currentTime + 0.04);
+      osc.stop(this.ctx.currentTime + 0.06);
     } catch (e) {
       // Ignored if audio context fails
     }
@@ -52,14 +52,14 @@ class AudioEngine {
       osc.type = 'triangle';
       osc.frequency.setValueAtTime(1600, this.ctx.currentTime);
       
-      gain.gain.setValueAtTime(0.45, this.ctx.currentTime); // Extremely loud and punchy as requested
-      gain.gain.exponentialRampToValueAtTime(0.001, this.ctx.currentTime + 0.02);
+      gain.gain.setValueAtTime(0.95, this.ctx.currentTime); // High volume punch
+      gain.gain.exponentialRampToValueAtTime(0.001, this.ctx.currentTime + 0.04);
       
       osc.connect(gain);
       gain.connect(this.ctx.destination);
       
       osc.start();
-      osc.stop(this.ctx.currentTime + 0.02);
+      osc.stop(this.ctx.currentTime + 0.04);
     } catch (e) {
       // Ignored
     }
@@ -79,14 +79,14 @@ class AudioEngine {
         osc.type = 'sine';
         osc.frequency.setValueAtTime(freq, now);
         
-        gain.gain.setValueAtTime(0.08, now);
-        gain.gain.exponentialRampToValueAtTime(0.001, now + 0.18);
+        gain.gain.setValueAtTime(0.40, now); // Boosted for high confirmation tone
+        gain.gain.exponentialRampToValueAtTime(0.001, now + 0.22);
         
         osc.connect(gain);
         gain.connect(this.ctx.destination);
         
         osc.start();
-        osc.stop(now + 0.18);
+        osc.stop(now + 0.22);
       });
     } catch (e) {
       // Ignored
@@ -104,14 +104,14 @@ class AudioEngine {
       osc.type = 'sine';
       osc.frequency.setValueAtTime(800, now);
       
-      gain.gain.setValueAtTime(0.1, now);
-      gain.gain.exponentialRampToValueAtTime(0.001, now + 0.25);
+      gain.gain.setValueAtTime(0.65, now); // Boosted for bright, audible beeps
+      gain.gain.exponentialRampToValueAtTime(0.001, now + 0.30);
       
       osc.connect(gain);
       gain.connect(this.ctx.destination);
       
       osc.start();
-      osc.stop(now + 0.25);
+      osc.stop(now + 0.30);
     } catch (e) {
       // Ignored
     }

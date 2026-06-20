@@ -381,6 +381,16 @@ export default function WorldClockTab({ soundEnabled }: WorldClockTabProps) {
     setActiveCities(prev => prev.filter(c => c.id !== id));
   };
 
+  // Set selected city with top scroll, ad-refreshing, and premium top loader
+  const handleSelectCity = (city: ClockCity | null) => {
+    setSelectedCity(city);
+    // Dispatch events to trigger YouTube-style loader progress bar and ad reloads
+    document.dispatchEvent(new CustomEvent('trigger-progress-bar'));
+    document.dispatchEvent(new CustomEvent('ad-tab-refresh'));
+    // Instantly scroll back to the absolute top of the page so the clock is visible immediately
+    window.scrollTo({ top: 0, behavior: 'auto' });
+  };
+
   return (
     <div className="w-full flex flex-col gap-6" id="world-clock-tab">
       
@@ -449,7 +459,7 @@ export default function WorldClockTab({ soundEnabled }: WorldClockTabProps) {
                 <div className="flex items-center gap-2 flex-wrap mb-1 pb-1">
                   {selectedCity && (
                     <button
-                      onClick={() => { setSelectedCity(null); if (soundEnabled) audioEngine.playTick(); }}
+                      onClick={() => { handleSelectCity(null); if (soundEnabled) audioEngine.playTick(); }}
                       className="p-1 px-2.5 rounded bg-slate-950 border border-slate-800 hover:bg-slate-900 text-indigo-400 hover:text-indigo-300 text-[10px] font-semibold transition flex items-center gap-1 cursor-pointer mr-3"
                       title="Back to local timezone"
                     >
@@ -533,7 +543,7 @@ export default function WorldClockTab({ soundEnabled }: WorldClockTabProps) {
 
         {selectedCity ? (
           <button 
-            onClick={() => { setSelectedCity(null); if (soundEnabled) audioEngine.playTick(); }}
+            onClick={() => { handleSelectCity(null); if (soundEnabled) audioEngine.playTick(); }}
             className="p-2 px-3 rounded-xl bg-slate-950 hover:bg-slate-900 border border-slate-805 text-slate-300 text-xs font-semibold flex items-center gap-2 transition cursor-pointer"
           >
             <ArrowLeft className="h-4 w-4" />
@@ -598,7 +608,7 @@ export default function WorldClockTab({ soundEnabled }: WorldClockTabProps) {
                   animate={{ opacity: 1, scale: 1 }}
                   exit={{ opacity: 0, scale: 0.98 }}
                   onClick={() => {
-                    setSelectedCity(city);
+                    handleSelectCity(city);
                     if (soundEnabled) audioEngine.playTick();
                   }}
                   className="bg-slate-900/20 border border-slate-900/80 p-4.5 rounded-2xl flex items-center justify-between hover:border-indigo-500/40 hover:bg-slate-900/40 transition duration-200 group cursor-pointer"

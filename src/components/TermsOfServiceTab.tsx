@@ -1,5 +1,6 @@
 import React from 'react';
-import { Scale, HelpCircle, CheckCircle, AlertTriangle } from 'lucide-react';
+import { Scale, HelpCircle, CheckCircle, AlertTriangle, ArrowLeft } from 'lucide-react';
+import AdBanner from './AdBanner';
 
 interface TermsOfServiceProps {
   onClose: () => void;
@@ -8,16 +9,40 @@ interface TermsOfServiceProps {
 export default function TermsOfServiceTab({ onClose }: TermsOfServiceProps) {
   return (
     <div className="space-y-6" id="terms-of-service-hull text-left">
-      <div className="flex items-center justify-between border-b border-slate-900 pb-3">
+      <div className="flex items-center gap-3 border-b border-slate-900 pb-3">
+        <button 
+          onClick={onClose}
+          className="p-2 sm:p-2.5 rounded-xl bg-slate-900/60 border border-slate-800 text-slate-400 hover:text-slate-100 hover:bg-slate-900 hover:border-slate-700 transition duration-150 cursor-pointer flex items-center justify-center shrink-0"
+          title="Back to Timing Tools"
+          id="terms-back-btn"
+        >
+          <ArrowLeft className="h-4 w-4" />
+        </button>
         <div className="text-left">
-          <h3 className="text-xl font-display font-semibold text-slate-100">Terms of Service</h3>
-          <p className="text-xs text-slate-500">Effective Date: June 19, 2026 | Global Licensing Agreement</p>
+          <h3 className="text-lg sm:text-xl font-display font-semibold text-slate-100">Terms of Service</h3>
+          <p className="text-[10px] sm:text-xs text-slate-500">Effective Date: June 19, 2026 | Global Licensing Agreement</p>
         </div>
       </div>
 
-      <div className="space-y-4 max-h-[350px] overflow-y-auto pr-2 text-xs text-slate-400 leading-relaxed custom-scrollbar text-left font-sans">
+      {/* Embedded Responsive Leaderboard Ad Header optimized for PC/Mobile/Tablet */}
+      <div className="w-full flex justify-center animate-fade-in my-4" id="terms-top-leaderboard-ad">
+        {/* Phone display */}
+        <div className="block sm:hidden">
+          <AdBanner adKey="ccade14074ab6047bdcd6acbf921dc1d" format="iframe" height={50} width={320} label="SPONSORED广告" hideBorder compact />
+        </div>
+        {/* Tablet display */}
+        <div className="hidden sm:block md:hidden">
+          <AdBanner adKey="db3a79e12aa161ce3f5a8e4e34162c60" format="iframe" height={60} width={468} label="SPONSORED广告" hideBorder compact />
+        </div>
+        {/* Desktop/Big screen display */}
+        <div className="hidden md:block">
+          <AdBanner adKey="d75dbe355ad5fd66241106d0dab90b09" format="iframe" height={90} width={728} label="SPONSORED广告" hideBorder compact />
+        </div>
+      </div>
+
+      <div className="space-y-6 text-slate-400 text-xs sm:text-sm leading-relaxed text-left font-sans">
         
-        <p className="text-left">
+        <p className="text-left font-sans">
           Welcome to the <strong>Online Stopwatch, Timer &amp; Clock Suite</strong> (referred to hereafter as the "Service" or "Platform"). By accessing or utilizing any part of this timing application on mobile devices, tablets, or desktop systems, you explicitly consent to these Terms of Service. Please review these contractual provisions carefully before logging corporate billable hours, calibrating athletic fitness intervals, scheduling academic exams, or managing distributed development teams.
         </p>
 
@@ -44,6 +69,11 @@ export default function TermsOfServiceTab({ onClose }: TermsOfServiceProps) {
           </p>
         </div>
 
+        {/* Supplementary Mid Page Ad Square - High CPC monetization impact */}
+        <div className="w-full flex justify-center py-4 my-4 border-y border-slate-900/40 bg-slate-950/20 rounded-2xl" id="terms-mid-square-ad-1">
+          <AdBanner adKey="c5bdb30469010828e32529cd44eafd76" format="iframe" height={250} width={300} label="RECOMMENDED COMPLIANCE AD" />
+        </div>
+
         <div className="space-y-2">
           <h4 className="text-sm font-semibold text-slate-200 font-display">3. User Data Ownership &amp; Local Persistence</h4>
           <p>
@@ -59,6 +89,11 @@ export default function TermsOfServiceTab({ onClose }: TermsOfServiceProps) {
           <p>
             To the maximum extent permitted under applicable law, in no event shall our developers, engineering partners, or third-party associations (including <strong>@toolifiy</strong>) be liable for any direct, indirect, incidental, punitive, special, or consequential damages. This includes but is not limited to: loss of project revenues, missed physical appointments, failed alarms due to browser muting policies, lost client consultation track sheets, or temporary service interruptions. You operate this timing platform entirely at your own discretion and risk.
           </p>
+        </div>
+
+        {/* Second Supplementary Mid Page Ad Square - Higher user scroll conversions */}
+        <div className="w-full flex justify-center py-4 my-4 border-y border-slate-900/40 bg-slate-950/20 rounded-2xl" id="terms-mid-square-ad-2">
+          <AdBanner adKey="c5bdb30469010828e32529cd44eafd76" format="iframe" height={250} width={300} label="SPONSORED PLATFORM UPGRADE" />
         </div>
 
         <div className="space-y-2">
@@ -82,6 +117,11 @@ export default function TermsOfServiceTab({ onClose }: TermsOfServiceProps) {
           </p>
         </div>
 
+      </div>
+
+      {/* Embedded High Value Large Square Ad Banner optimized for all devices */}
+      <div className="w-full flex justify-center my-6 py-2" id="terms-bottom-square-ad">
+        <AdBanner adKey="c5bdb30469010828e32529cd44eafd76" format="iframe" height={250} width={300} label="SPONSORED TOPIC" />
       </div>
 
       <div className="flex justify-end pt-4 border-t border-slate-900">

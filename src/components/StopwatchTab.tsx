@@ -13,6 +13,7 @@ import { motion, AnimatePresence } from 'motion/react';
 import { Lap, TimerStatus } from '../types';
 import { audioEngine } from './AudioEngine';
 import StatsPanel from './StatsPanel';
+import AdBanner from './AdBanner';
 
 interface StopwatchTabProps {
   soundEnabled: boolean;
@@ -545,6 +546,22 @@ export default function StopwatchTab({ soundEnabled, shortcutsEnabled, activeTab
               </AnimatePresence>
             </div>
           )}
+        </div>
+
+        {/* Dynamic Responsive Leaderboard Ad under Lap logs box */}
+        <div className="w-full flex justify-center animate-fade-in pt-1" id="sub-laps-middle-ad-deck">
+          {/* Phone display */}
+          <div className="block sm:hidden flex justify-center">
+            <AdBanner adKey="ccade14074ab6047bdcd6acbf921dc1d" format="iframe" height={50} width={320} label="SPONSORED广告" hideBorder compact />
+          </div>
+          {/* Tablet display */}
+          <div className="hidden sm:block md:hidden flex justify-center">
+            <AdBanner adKey="db3a79e12aa161ce3f5a8e4e34162c60" format="iframe" height={60} width={468} label="SPONSORED广告" hideBorder compact />
+          </div>
+          {/* Desktop display */}
+          <div className="hidden md:block flex justify-center">
+            <AdBanner adKey="d75dbe355ad5fd66241106d0dab90b09" format="iframe" height={90} width={728} label="SPONSORED广告" hideBorder compact />
+          </div>
         </div>
 
         {/* Statistics and timesheets aggregated panel */}

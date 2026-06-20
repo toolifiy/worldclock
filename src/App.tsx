@@ -17,6 +17,7 @@ import { motion, AnimatePresence } from 'motion/react';
 import { ActiveTab } from './types';
 import { audioEngine } from './components/AudioEngine';
 import SEOContent from './components/SEOContent';
+import AdBanner from './components/AdBanner';
 import TimerTab from './components/TimerTab';
 import WorldClockTab from './components/WorldClockTab';
 import StopwatchTab from './components/StopwatchTab';
@@ -29,25 +30,79 @@ export default function App() {
   // Navigation State & Dynamic Transition states
   const [activeTab, setActiveTab] = useState<ActiveTab>('STOPWATCH');
   const [isTransitioning, setIsTransitioning] = useState<boolean>(true); // Keeps sandglass active on initial cold load calibration
+  const [loadingProgress, setLoadingProgress] = useState<number>(0);
+  const [isProgressVisible, setIsProgressVisible] = useState<boolean>(false);
   const [pendingTab, setPendingTab] = useState<ActiveTab>(() => {
     const hash = window.location.hash.toLowerCase();
     if (hash === '#timer' || hash === '#countdown') {
       return 'TIMER';
     } else if (hash === '#clock' || hash === '#timezone' || hash === '#worldclock' || hash === '#world-clock') {
       return 'WORLD_CLOCK';
+    } else if (hash === '#privacy') {
+      return 'PRIVACY';
+    } else if (hash === '#terms' || hash === '#tos') {
+      return 'TERMS';
+    } else if (hash === '#contact' || hash === '#support') {
+      return 'CONTACT';
     }
     return 'STOPWATCH';
   });
 
   const initiateTabSwitch = (targetTab: ActiveTab) => {
+    // Fire YouTube-style top progress loader and reload current ads to maximize views
+    document.dispatchEvent(new CustomEvent('trigger-progress-bar'));
+    document.dispatchEvent(new CustomEvent('ad-tab-refresh'));
+
     setPendingTab(targetTab);
     setIsTransitioning(true);
+    // Instant scroll to top when navigation triggers
+    window.scrollTo({ top: 0, behavior: 'auto' });
   };
 
   const handleLoaderComplete = () => {
     setActiveTab(pendingTab);
     setIsTransitioning(false);
+    window.scrollTo({ top: 0, behavior: 'auto' });
   };
+
+  // Support custom YouTube-style top-bar loader triggers across routes and user actions (1 second duration)
+  useEffect(() => {
+    let t1: NodeJS.Timeout;
+    let t2: NodeJS.Timeout;
+    let t3: NodeJS.Timeout;
+    let t4: NodeJS.Timeout;
+
+    const startProgressBar = () => {
+      setIsProgressVisible(true);
+      setLoadingProgress(10);
+
+      // Rapidly step to mimic real network data throughput
+      t1 = setTimeout(() => {
+        setLoadingProgress(45);
+      }, 150);
+
+      t2 = setTimeout(() => {
+        setLoadingProgress(80);
+      }, 450);
+
+      t3 = setTimeout(() => {
+        setLoadingProgress(100);
+        t4 = setTimeout(() => {
+          setIsProgressVisible(false);
+          setLoadingProgress(0);
+        }, 150);
+      }, 850);
+    };
+
+    document.addEventListener('trigger-progress-bar', startProgressBar);
+    return () => {
+      document.removeEventListener('trigger-progress-bar', startProgressBar);
+      clearTimeout(t1);
+      clearTimeout(t2);
+      clearTimeout(t3);
+      clearTimeout(t4);
+    };
+  }, []);
 
   // Bidirectional sync: Shift URL hash when active tab changes
   useEffect(() => {
@@ -56,6 +111,12 @@ export default function App() {
       hash = '#timer';
     } else if (activeTab === 'WORLD_CLOCK') {
       hash = '#clock';
+    } else if (activeTab === 'PRIVACY') {
+      hash = '#privacy';
+    } else if (activeTab === 'TERMS') {
+      hash = '#terms';
+    } else if (activeTab === 'CONTACT') {
+      hash = '#contact';
     }
     if (window.location.hash !== hash) {
       window.location.hash = hash;
@@ -71,6 +132,12 @@ export default function App() {
         target = 'TIMER';
       } else if (hash === '#clock' || hash === '#timezone' || hash === '#worldclock' || hash === '#world-clock') {
         target = 'WORLD_CLOCK';
+      } else if (hash === '#privacy') {
+        target = 'PRIVACY';
+      } else if (hash === '#terms' || hash === '#tos') {
+        target = 'TERMS';
+      } else if (hash === '#contact' || hash === '#support') {
+        target = 'CONTACT';
       }
       if (target !== pendingTab) {
         initiateTabSwitch(target);
@@ -80,26 +147,31 @@ export default function App() {
     return () => window.removeEventListener('hashchange', handleHashChange);
   }, [pendingTab]);
 
+  // Instantly scroll back to the top of the viewport when pages or tabs transition to eliminate user frustration
+  useEffect(() => {
+    window.scrollTo({ top: 0, behavior: 'auto' });
+  }, [activeTab]);
+
   // Dynamic Browser SEO Page-Level Titles on tab switch
   useEffect(() => {
     let title = "Online Stopwatch - Instant Free Millisecond Lap Timer";
-    let description = "Our highly accurate, professional Online Stopwatch features precision lap split increments and direct timesheet CSV exports for elite task logging.";
+    let description = "Online Stopwatch is a high-precision, millisecond-accurate digital chronometer utility engineered for professional time management, productivity tracking, speedrunning, corporate timesheet audits, fitness workouts, and scientific interval timing. This completely free browser-based stopwatch application operates entirely client-side with standalone offline capability, ensuring zero network lag, zero page performance bloatware, and absolute data safety. Click the spacebar to initiate, pause, or resume the timer instantly, use the L key to log lap splits, or trigger the R key to clear the session. Visual analytics panels deliver real-time data calculations, dynamically plotting your average laps, identify fast/slow intervals, and display times of completion. Once your timing block or work sprint is finished, execute a single-click CSV timesheet download for immediate upload into billing portals, Excel spreadsheets, or developer calendars. We respect complete user discretion, protecting confidentiality and using local browser registry (localStorage) to store data. Pair this tool with our online alarm clocks, active countdown widgets, and multi-city timezone planners. It is perfectly optimized for swift SEO indexing, responsive touch displays, Google’s Core Web Vitals, and compliant with CCPA/GDPR privacy mandates. Maximize your focus, streamline daily engineering goals, partition intensive study sessions with Pomodoro rhythms, audit freelance billable consultants, and calibrate swim or sports lap segments with our elite web timepiece. We ensure continuous offline timing support where standard single-threaded operating system optimization protocols and browser active background sleep modes won't desynchronize or freeze your ticks. Track, measure, analyze, segment, and persist your milestones cleanly. Use our headless integrations, custom metronome click options, and real-time audio beep feedback synthesizer loops dynamically to organize billing reports and streamline daily sprints.";
     
     if (activeTab === 'TIMER') {
       title = "Online Countdown Timer - Free Quick Alarm & Interval Study Tracker";
-      description = "Simple online countdown timer tools and buzzer triggers curated for students, educators, and gym workouts. Full visual ring progress tracking.";
+      description = "Online Countdown Timer is an ultra-precise, modular browser-based alarm clock and dynamic interval tracker designed for gym workouts, classroom activities, recipe cooking, professional presentations, study periods, and Pomodoro focus blocks. Set custom timer durations in hours, minutes, and seconds, or leverage our lightning-fast preset templates (ranging from 1-minute quick trials to 1-hour professional coaching sprints). An elegant, responsive circular visual ring progress guide animates continuously in synchronized real-time alongside microsecond countdown counters. Choose from multiple distinct audio alert triggers like tactical buzzer horn signals, gentle clock bells, alert rings, or deep bass alarms that override browser standby configurations. Your volume controls and repeat timer loops stay synchronized using standard HTML5 Web Audio API frequency nodes completely local inside your device cache. Perfect for HIIT interval fitness training, school exam countdowns, meditation breathing cycles, stretch-break reminders, and workplace goal tracking. This timer is optimized with high-contrast ambient display styling, full offline capability, zero server telemetry, and responsive typography layouts scaling smoothly across smartphones, tablets, and widescreen desktop monitors. Align your day with our high-speed stopwatch split recorders and international world clock converters to unlock supreme workspace organization and maximize hourly productivity outputs with zero effort. We provide immediate visual feedback support to prevent distraction, letting you build custom interval repetitions to organize personal sprint workflows cleanly.";
     } else if (activeTab === 'WORLD_CLOCK') {
       title = "Online World Clock - Exact UTC, GMT & Live Multi-City Timezone Converter";
-      description = "Review accurate, real-time local wall clock times around the globe. Monitor shifts, daylight savings, and GMT offsets smoothly on an atomic feed.";
+      description = "Online World Clock is a real-time, high-precision global timezone observatory and multi-city coordinate hub engineered for distributed teams, international travelers, financial traders, and remote corporate communication. Monitor exact local wall clock timings across global metropolitan zones simultaneously, checking relative timezone differences, Greenwich Mean Time (GMT) alignments, Coordinated Universal Time (UTC) reference standards, and active Day/Night shifts. Search, discover, and pin customized cities (such as New York, London, Tokyo, Paris, and Sydney) into a clean, unified dashboard with customized solar-geometric ambient dials indicating day/night cycles. Our dynamic, responsive world clock widget automatically computes local browser geographic offsets, accounts for dynamic daylight saving time (DST) shifts, and updates global country calendars with atomic precision. Fully optimized for instant page ranking and designed under high-contrast dark visual parameters, this tool keeps your global virtual conferences synchronized, enhances workflow timelines, and operates entirely on lightweight client-side scripts. Perfect for remote developers scheduling global Zoom meetings, freelancers checking business hour deadlines, or travelers calculating regional time shifts. Combine with our responsive online stopwatch split logger and custom interval countdown alert templates to curate a master suite of precise productivity systems. Review standard operating city grids, daylight offsets, geographic clock lines, and coordinate parameters to streamline team cooperation smoothly.";
     } else if (activeTab === 'PRIVACY') {
       title = "Privacy Policy - Online Timing Suite Data Privacy Guarantee";
-      description = "Review our comprehensive client-side data security policies. Zero recording, zero server logs, and complete, standard global privacy compliance.";
+      description = "Privacy Policy of the Online Stopwatch, Timer & Clock Suite outlines our absolute commitment to ultimate data safety, complete user privacy, and strict client-side data minimization. Review how our browser-based utility application ensures your recorded lap logs, custom countdown parameters, pinned city timezone regions, and sound toggle configurations reside exclusively inside your local browser container (localStorage sandbox). We run zero databases, gather zero server logs, execute zero tracking pixels, and do not collect any Personally Identifiable Information (PII) of our global users. Features direct, instant CSV exports of timesheets for your safe retention. Fully compliant with CCPA, GDPR, and global data privacy regulations, keeping your timing environments completely secured, reliable, and completely under your own discretion. Explore how our application designs enforce absolute anonymity of your task tags, hourly logging blocks, and sound configurations with zero corporate overhead. Protect your workspace integrations and access secure timing parameters securely without any cloud server telemetry tracking. Read our complete standard policy templates regarding client-side data persistence, audio alarm generation nodes, browser permission matrices, external link integrations, and direct support SLA channels to ensure complete confidence in operations. Feel safe logging freelance billing clocks, study sprint metrics, or athletic milestones with complete privacy guarantees.";
     } else if (activeTab === 'TERMS') {
       title = "Terms of Service - Online Timing Suite Licensing Agreement";
-      description = "Understand our free permissible licenses, high-precision limitations of liability, and web operational terms of timing synchronization.";
+      description = "Terms of Service of the Online Stopwatch, Timer & Clock Suite describes the binding contractual agreement and permissible timing application licenses. Read our high-precision technical disclaimers, browser timer drift alerts, background throttling limitations, and general liability limits of service. By launching this free digital stopwatch, split lap recorder, or countdown buzzer alarm clock on any device, you accept these terms of operation. Commercial freelancers are granted fully permissive access to measure and download billing logs, while automated load test scraping, system coordinate visual cloning, malicious localStorage injection, or layout replication without explicit developer permission is strictly prohibited. Keep your workflow safe by reading our standard operational policies. We provide our scheduling software entirely on an as-is basis, with zero direct warranties or business-critical guarantees concerning third-party system sleep intervals. You carry absolute responsibility for maintaining local timesheet exports and managing backing data sets independently. Our licensing structure enables educational classrooms, corporate managers, remoteSpeedrunners, and gym professionals to build custom task-logs dynamically. Evaluate our complete liability boundaries, legal governance coordinates, and social external link rules to coordinate timing systems smoothly with proper legal alignment.";
     } else if (activeTab === 'CONTACT') {
       title = "Contact Us - Connect Directly on Instagram @toolifiy";
-      description = "Official communication channel of our Timing utilities. Access our verified Instagram profile links to share technical feedback or DM business ideas.";
+      description = "Contact Us at Online Stopwatch, Timer & Clock Suite, and connect directly with the product creator of timing utilities via Instagram at @toolifiy. Skip support queues and automated reply systems by sending direct messages (DM) for technical collaboration, feedback sharing, custom feature integration proposals, layout adaptations, or API guides. Learn about support guidelines, technical standards, and our operational hub operating in standard Asian-Kolkata configurations. Access verified Instagram profile links, download high-contrast vector clock code resources, or explore joint workspace venture opportunities with quick response SLA metrics. Our engineering team is dedicated to providing high-speed responsiveness, matching premium standards of support for our worldwide user base. Message us direct updates concerning browser tick issues, classroom timer templates, corporate timesheet requirements, or customized daylight saving algorithms. Share your professional workflow story with us directly on our official social channel to coordinate upcoming feature logs and help us shape the future roadmap. We operate with complete feedback loops to continuously integrate optimized enhancements and maintain zero-latency performances. Tap the social CTA link now to enter the official creator hub of timing utilities and start a precise productivity consultation with our primary software architect.";
     }
 
     document.title = title;
@@ -157,6 +229,18 @@ export default function App() {
   return (
     <div className="min-h-screen bg-slate-950 text-slate-100 flex flex-col justify-between selection:bg-indigo-600/30 selection:text-indigo-200 pb-12" id="main-stopwatch-app">
       
+      {/* YouTube-style Top Progress Bar */}
+      {isProgressVisible && (
+        <div 
+          className="fixed top-0 left-0 h-[3px] bg-gradient-to-r from-red-500 via-pink-500 to-indigo-500 z-[99999] transition-all duration-300 ease-out"
+          style={{ 
+            width: `${loadingProgress}%`,
+            boxShadow: '0 0 10px rgba(99, 102, 241, 0.8), 0 0 5px rgba(236, 72, 153, 0.8)'
+          }}
+          id="youtube-loading-bar"
+        />
+      )}
+      
       {/* Top Navigation Headers */}
       <header className="border-b border-slate-900 bg-slate-950/60 backdrop-blur-md relative z-40 px-4 py-4" id="app-header">
         <div className="max-w-6xl mx-auto flex items-center justify-between">
@@ -205,124 +289,201 @@ export default function App() {
       </header>
 
       {/* Main Container Deck */}
-      <main className="flex-grow max-w-6xl w-full mx-auto px-4 pt-3 pb-6 sm:pt-4 sm:pb-8 flex flex-col gap-4 sm:gap-5">
+      <main className="flex-grow max-w-7xl w-full mx-auto px-4 pt-1 pb-6 sm:pt-2 sm:pb-8 flex flex-col gap-3 sm:gap-4">
         
-        {/* Horizontal Wide & Curved Small Option Selector Header Bar */}
-        <div className="w-full flex justify-center animate-fade-in animate-duration-300" id="header-option-selector-deck">
-          <div className="bg-slate-950/30 border border-slate-900/90 backdrop-blur-md rounded-2xl p-1.5 flex items-center gap-1.5 w-full max-w-lg shadow-xl shadow-slate-950/30" id="header-tabs-navigation">
+        {/* Integrated Header Wrapper to minimize any gaps and save screen space */}
+        <div className="w-full flex flex-col items-center gap-1" id="ad-and-navigation-wrapper">
+          {/* Dynamic Responsive Leaderboard Ad Header */}
+          {(activeTab === 'STOPWATCH' || activeTab === 'TIMER' || activeTab === 'WORLD_CLOCK') && (
+            <div className="w-full flex justify-center animate-fade-in m-0 p-0" id="top-ad-deck-leaderboard">
+              {/* Phone display */}
+              <div className="block sm:hidden">
+                <AdBanner adKey="ccade14074ab6047bdcd6acbf921dc1d" format="iframe" height={50} width={320} label="SPONSORED广告" hideBorder compact />
+              </div>
+              {/* Tablet display */}
+              <div className="hidden sm:block md:hidden">
+                <AdBanner adKey="db3a79e12aa161ce3f5a8e4e34162c60" format="iframe" height={60} width={468} label="SPONSORED广告" hideBorder compact />
+              </div>
+              {/* Desktop display */}
+              <div className="hidden md:block">
+                <AdBanner adKey="d75dbe355ad5fd66241106d0dab90b09" format="iframe" height={90} width={728} label="SPONSORED广告" hideBorder compact />
+              </div>
+            </div>
+          )}
+
+          {/* Horizontal Wide & Curved Small Option Selector Header Bar (Only shown on timing utility tabs to save screen space) */}
+          {(activeTab === 'STOPWATCH' || activeTab === 'TIMER' || activeTab === 'WORLD_CLOCK') && (
+            <div className="w-full flex justify-center animate-fade-in animate-duration-300" id="header-option-selector-deck">
+              <div className="bg-slate-950/30 border border-slate-900/90 backdrop-blur-md rounded-2xl p-1.5 flex items-center gap-1.5 w-full max-w-lg shadow-xl shadow-slate-950/30" id="header-tabs-navigation">
+                
+                {/* Stopwatch Option Button */}
+                <button
+                  onClick={() => {
+                    initiateTabSwitch('STOPWATCH');
+                    if (soundEnabled) audioEngine.playTick();
+                  }}
+                  className={`flex-1 flex items-center justify-center gap-2 py-2 px-3 rounded-xl transition-all duration-200 cursor-pointer text-xs font-semibold border ${
+                    (activeTab === 'STOPWATCH' || pendingTab === 'STOPWATCH') && isTransitioning
+                      ? 'bg-slate-900/10 border-slate-850 text-indigo-400 font-bold'
+                      : activeTab === 'STOPWATCH'
+                      ? 'bg-indigo-600/15 border-indigo-500 text-indigo-400 shadow-lg shadow-indigo-500/5 font-bold'
+                      : 'bg-slate-900/30 border-slate-800/80 text-slate-400 hover:text-indigo-300 hover:border-slate-700/80'
+                  }`}
+                  id="header-tab-stopwatch"
+                >
+                  <Clock className="h-4 w-4" />
+                  <span>Online Stopwatch</span>
+                </button>
+
+                {/* Timer Option Button */}
+                <button
+                  onClick={() => {
+                    initiateTabSwitch('TIMER');
+                    if (soundEnabled) audioEngine.playTick();
+                  }}
+                  className={`flex-1 flex items-center justify-center gap-2 py-2 px-3 rounded-xl transition-all duration-200 cursor-pointer text-xs font-semibold border ${
+                    (activeTab === 'TIMER' || pendingTab === 'TIMER') && isTransitioning
+                      ? 'bg-slate-900/10 border-slate-850 text-indigo-400 font-bold'
+                      : activeTab === 'TIMER'
+                      ? 'bg-indigo-600/15 border-indigo-500 text-indigo-400 shadow-lg shadow-indigo-500/5 font-bold'
+                      : 'bg-slate-900/30 border-slate-800/80 text-slate-400 hover:text-indigo-300 hover:border-slate-700/80'
+                  }`}
+                  id="header-tab-timer"
+                >
+                  <Hourglass className="h-4 w-4" />
+                  <span>Online Timer</span>
+                </button>
+
+              {/* Clock Option Button */}
+              <button
+                onClick={() => {
+                  initiateTabSwitch('WORLD_CLOCK');
+                  if (soundEnabled) audioEngine.playTick();
+                }}
+                className={`flex-1 flex items-center justify-center gap-2 py-2 px-3 rounded-xl transition-all duration-200 cursor-pointer text-xs font-semibold border ${
+                  (activeTab === 'WORLD_CLOCK' || pendingTab === 'WORLD_CLOCK') && isTransitioning
+                    ? 'bg-slate-900/10 border-slate-850 text-indigo-400 font-bold'
+                    : activeTab === 'WORLD_CLOCK'
+                    ? 'bg-indigo-600/15 border-indigo-500 text-indigo-400 shadow-lg shadow-indigo-500/5 font-bold'
+                    : 'bg-slate-900/30 border-slate-800/80 text-slate-400 hover:text-indigo-300 hover:border-slate-700/80'
+                }`}
+                id="header-tab-world-clock"
+              >
+                <Globe className="h-4 w-4" />
+                <span>Online Clock</span>
+              </button>
+
+            </div>
+          </div>
+        )}
+      </div>
+        
+        {/* Responsive Grid Layout to accommodate premium side banners without taking up core application room */}
+        <div className="w-full" id="core-layout-deck">
+          <div className="grid grid-cols-1 lg:grid-cols-12 gap-5 items-start">
             
-            {/* Stopwatch Option Button */}
-            <button
-              onClick={() => {
-                initiateTabSwitch('STOPWATCH');
-                if (soundEnabled) audioEngine.playTick();
-              }}
-              className={`flex-1 flex items-center justify-center gap-2 py-2 px-3 rounded-xl transition-all duration-200 cursor-pointer text-xs font-semibold border ${
-                (activeTab === 'STOPWATCH' || pendingTab === 'STOPWATCH') && isTransitioning
-                  ? 'bg-slate-900/10 border-slate-850 text-indigo-400 font-bold'
-                  : activeTab === 'STOPWATCH'
-                  ? 'bg-indigo-600/15 border-indigo-500 text-indigo-400 shadow-lg shadow-indigo-500/5 font-bold'
-                  : 'bg-slate-900/30 border-slate-800/80 text-slate-400 hover:text-indigo-300 hover:border-slate-700/80'
-              }`}
-              id="header-tab-stopwatch"
-            >
-              <Clock className="h-4 w-4" />
-              <span>Online Stopwatch</span>
-            </button>
+            {/* Left Skyscraper Column - Desktop Only */}
+            {(activeTab === 'STOPWATCH' || activeTab === 'TIMER' || activeTab === 'WORLD_CLOCK') ? (
+              <div className="hidden lg:flex lg:col-span-2 flex-col gap-4 sticky top-24 items-center" id="desktop-left-ad-rail">
+                <AdBanner adKey="bb6586562ba9e600bfde4e38d14ba022" format="iframe" height={300} width={160} label="SPONSORED" />
+                <AdBanner adKey="bb6586562ba9e600bfde4e38d14ba022" format="iframe" height={300} width={160} label="RECOMMENDED" />
+              </div>
+            ) : (
+              <div className="hidden lg:block lg:col-span-2" />
+            )}
 
-            {/* Timer Option Button */}
-            <button
-              onClick={() => {
-                initiateTabSwitch('TIMER');
-                if (soundEnabled) audioEngine.playTick();
-              }}
-              className={`flex-1 flex items-center justify-center gap-2 py-2 px-3 rounded-xl transition-all duration-200 cursor-pointer text-xs font-semibold border ${
-                (activeTab === 'TIMER' || pendingTab === 'TIMER') && isTransitioning
-                  ? 'bg-slate-900/10 border-slate-850 text-indigo-400 font-bold'
-                  : activeTab === 'TIMER'
-                  ? 'bg-indigo-600/15 border-indigo-500 text-indigo-400 shadow-lg shadow-indigo-500/5 font-bold'
-                  : 'bg-slate-900/30 border-slate-800/80 text-slate-400 hover:text-indigo-300 hover:border-slate-700/80'
-              }`}
-              id="header-tab-timer"
-            >
-              <Hourglass className="h-4 w-4" />
-              <span>Online Timer</span>
-            </button>
+            {/* Central App Arena Content Streams */}
+            <div className="col-span-12 lg:col-span-8 flex flex-col gap-4 sm:gap-5" id="central-app-column">
+              {/* Render content based on Active Tab */}
+              {activeTab === 'STOPWATCH' && (
+                <div className="animate-fade-in" id="stopwatch-container-view">
+                  <StopwatchTab 
+                    soundEnabled={soundEnabled} 
+                    shortcutsEnabled={shortcutsEnabled} 
+                    activeTab={activeTab} 
+                  />
+                </div>
+              )}
 
-            {/* Clock Option Button */}
-            <button
-              onClick={() => {
-                initiateTabSwitch('WORLD_CLOCK');
-                if (soundEnabled) audioEngine.playTick();
-              }}
-              className={`flex-1 flex items-center justify-center gap-2 py-2 px-3 rounded-xl transition-all duration-200 cursor-pointer text-xs font-semibold border ${
-                (activeTab === 'WORLD_CLOCK' || pendingTab === 'WORLD_CLOCK') && isTransitioning
-                  ? 'bg-slate-900/10 border-slate-850 text-indigo-400 font-bold'
-                  : activeTab === 'WORLD_CLOCK'
-                  ? 'bg-indigo-600/15 border-indigo-500 text-indigo-400 shadow-lg shadow-indigo-500/5 font-bold'
-                  : 'bg-slate-900/30 border-slate-800/80 text-slate-400 hover:text-indigo-300 hover:border-slate-700/80'
-              }`}
-              id="header-tab-world-clock"
-            >
-              <Globe className="h-4 w-4" />
-              <span>Online Clock</span>
-            </button>
+              {/* Render Countdown Timer tab */}
+              {activeTab === 'TIMER' && (
+                <div className="animate-fade-in" id="timer-container-view">
+                  <TimerTab 
+                    soundEnabled={soundEnabled} 
+                    shortcutsEnabled={shortcutsEnabled}
+                    activeTab={activeTab}
+                  />
+                </div>
+              )}
+
+              {/* Render World Clock tab */}
+              {activeTab === 'WORLD_CLOCK' && (
+                <div className="animate-fade-in" id="world-clock-container-view">
+                  <WorldClockTab soundEnabled={soundEnabled} />
+                </div>
+              )}
+
+              {/* Dynamic Responsive Banner ad under the clock box (optimized for all screens) */}
+              {(activeTab === 'STOPWATCH' || activeTab === 'TIMER' || activeTab === 'WORLD_CLOCK') && (
+                <div className="w-full flex justify-center animate-fade-in pt-1" id="sub-clock-middle-ad-deck">
+                  {/* Phone display */}
+                  <div className="block sm:hidden">
+                    <AdBanner adKey="ccade14074ab6047bdcd6acbf921dc1d" format="iframe" height={50} width={320} label="SPONSORED广告" hideBorder compact />
+                  </div>
+                  {/* Tablet display */}
+                  <div className="hidden sm:block md:hidden">
+                    <AdBanner adKey="db3a79e12aa161ce3f5a8e4e34162c60" format="iframe" height={60} width={468} label="SPONSORED广告" hideBorder compact />
+                  </div>
+                  {/* Desktop display */}
+                  <div className="hidden md:block">
+                    <AdBanner adKey="d75dbe355ad5fd66241106d0dab90b09" format="iframe" height={90} width={728} label="SPONSORED广告" hideBorder compact />
+                  </div>
+                </div>
+              )}
+
+              {/* Render Privacy Policy page */}
+              {activeTab === 'PRIVACY' && (
+                <div className="animate-fade-in" id="privacy-container-view">
+                  <PrivacyPolicyTab onClose={() => initiateTabSwitch('STOPWATCH')} />
+                </div>
+              )}
+
+              {/* Render Terms of Service page */}
+              {activeTab === 'TERMS' && (
+                <div className="animate-fade-in" id="terms-container-view">
+                  <TermsOfServiceTab onClose={() => initiateTabSwitch('STOPWATCH')} />
+                </div>
+              )}
+
+              {/* Render Contact Us page */}
+              {activeTab === 'CONTACT' && (
+                <div className="animate-fade-in" id="contact-container-view">
+                  <ContactUsTab onClose={() => initiateTabSwitch('STOPWATCH')} />
+                </div>
+              )}
+
+              {/* Robust Bottom 300x250 Medium Rectangle Ad inside Central Column */}
+              {(activeTab === 'STOPWATCH' || activeTab === 'TIMER' || activeTab === 'WORLD_CLOCK') && (
+                <div className="w-full flex justify-center py-2 animate-fade-in" id="bottom-ad-deck-square">
+                  <AdBanner adKey="c5bdb30469010828e32529cd44eafd76" format="iframe" height={250} width={300} label="SPONSORED广告" />
+                </div>
+              )}
+
+              {/* Structured SEO-friendly instructions & FAQs panel */}
+              {(activeTab === 'STOPWATCH' || activeTab === 'TIMER' || activeTab === 'WORLD_CLOCK') && <SEOContent />}
+            </div>
+
+            {/* Right Skyscraper Column - Desktop Only */}
+            {(activeTab === 'STOPWATCH' || activeTab === 'TIMER' || activeTab === 'WORLD_CLOCK') ? (
+              <div className="hidden lg:flex lg:col-span-2 flex-col gap-4 sticky top-24 items-center" id="desktop-right-ad-rail">
+                <AdBanner adKey="4923cc907dacca0d26355c8f49f110ed" format="iframe" height={600} width={160} label="SPONSORED" />
+              </div>
+            ) : (
+              <div className="hidden lg:block lg:col-span-2" />
+            )}
 
           </div>
         </div>
-        
-        {/* Render content based on Active Tab */}
-        {activeTab === 'STOPWATCH' && (
-          <div className="animate-fade-in" id="stopwatch-container-view">
-            <StopwatchTab 
-              soundEnabled={soundEnabled} 
-              shortcutsEnabled={shortcutsEnabled} 
-              activeTab={activeTab} 
-            />
-          </div>
-        )}
-
-        {/* Render Countdown Timer tab */}
-        {activeTab === 'TIMER' && (
-          <div className="animate-fade-in" id="timer-container-view">
-            <TimerTab 
-              soundEnabled={soundEnabled} 
-              shortcutsEnabled={shortcutsEnabled}
-              activeTab={activeTab}
-            />
-          </div>
-        )}
-
-        {/* Render World Clock tab */}
-        {activeTab === 'WORLD_CLOCK' && (
-          <div className="animate-fade-in" id="world-clock-container-view">
-            <WorldClockTab soundEnabled={soundEnabled} />
-          </div>
-        )}
-
-        {/* Render Privacy Policy page */}
-        {activeTab === 'PRIVACY' && (
-          <div className="animate-fade-in" id="privacy-container-view">
-            <PrivacyPolicyTab onClose={() => initiateTabSwitch('STOPWATCH')} />
-          </div>
-        )}
-
-        {/* Render Terms of Service page */}
-        {activeTab === 'TERMS' && (
-          <div className="animate-fade-in" id="terms-container-view">
-            <TermsOfServiceTab onClose={() => initiateTabSwitch('STOPWATCH')} />
-          </div>
-        )}
-
-        {/* Render Contact Us page */}
-        {activeTab === 'CONTACT' && (
-          <div className="animate-fade-in" id="contact-container-view">
-            <ContactUsTab onClose={() => initiateTabSwitch('STOPWATCH')} />
-          </div>
-        )}
-
-        {/* Structured SEO-friendly instructions & FAQs panel */}
-        {(activeTab === 'STOPWATCH' || activeTab === 'TIMER' || activeTab === 'WORLD_CLOCK') && <SEOContent />}
 
         {/* Dynamic Sandglass Loader with Adaptive Connection-Speed Scaling */}
         <SandglassLoader 

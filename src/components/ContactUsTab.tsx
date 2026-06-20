@@ -1,5 +1,6 @@
 import React from 'react';
-import { Mail, Instagram, MapPin, Zap, MessageCircle, MessageSquareCode, Award, ArrowUpRight } from 'lucide-react';
+import { Mail, Instagram, MapPin, Zap, MessageCircle, MessageSquareCode, Award, ArrowUpRight, ArrowLeft } from 'lucide-react';
+import AdBanner from './AdBanner';
 
 interface ContactUsProps {
   onClose?: () => void;
@@ -10,14 +11,42 @@ export default function ContactUsTab({ onClose }: ContactUsProps) {
     <div className="bg-slate-900/45 border border-slate-900/80 rounded-3xl p-6 sm:p-10 text-left space-y-8 animate-fade-in" id="contact-us-hull">
       
       {/* Header section */}
-      <div className="border-b border-slate-800/80 pb-6">
-        <h2 className="text-2xl sm:text-3xl font-display font-semibold text-slate-100 flex items-center gap-3">
-          <MessageCircle className="h-6 sm:h-7 w-6 sm:w-7 text-pink-500" />
-          Get in Touch
-        </h2>
-        <p className="text-xs sm:text-sm text-slate-500 mt-1">
-          Direct connection with the creator of Timing Utilities and global productivity assets.
-        </p>
+      <div className="border-b border-slate-800/80 pb-6 flex items-center gap-3 sm:gap-4">
+        {onClose && (
+          <button 
+            onClick={onClose}
+            className="p-2 sm:p-2.5 rounded-xl bg-slate-900/60 border border-slate-800 text-slate-400 hover:text-slate-100 hover:bg-slate-900 hover:border-slate-700 transition duration-150 cursor-pointer flex items-center justify-center shrink-0"
+            title="Back to Timing Tools"
+            id="contact-back-btn"
+          >
+            <ArrowLeft className="h-4 w-4" />
+          </button>
+        )}
+        <div className="text-left">
+          <h2 className="text-xl sm:text-2xl font-display font-semibold text-slate-100 flex items-center gap-2">
+            <MessageCircle className="h-5 sm:h-6 w-5 sm:w-6 text-pink-500 shrink-0" />
+            Get in Touch
+          </h2>
+          <p className="text-[10px] sm:text-xs text-slate-500 mt-1">
+            Direct connection with the creator of Timing Utilities and global productivity assets.
+          </p>
+        </div>
+      </div>
+
+      {/* Embedded Responsive Leaderboard Ad Header optimized for PC/Mobile/Tablet */}
+      <div className="w-full flex justify-center animate-fade-in" id="contact-top-leaderboard-ad">
+        {/* Phone display */}
+        <div className="block sm:hidden">
+          <AdBanner adKey="ccade14074ab6047bdcd6acbf921dc1d" format="iframe" height={50} width={320} label="SPONSORED广告" hideBorder compact />
+        </div>
+        {/* Tablet display */}
+        <div className="hidden sm:block md:hidden">
+          <AdBanner adKey="db3a79e12aa161ce3f5a8e4e34162c60" format="iframe" height={60} width={468} label="SPONSORED广告" hideBorder compact />
+        </div>
+        {/* Desktop/Big screen display */}
+        <div className="hidden md:block">
+          <AdBanner adKey="d75dbe355ad5fd66241106d0dab90b09" format="iframe" height={90} width={728} label="SPONSORED广告" hideBorder compact />
+        </div>
       </div>
 
       {/* Main Grid: Focus content and direct social CTA card */}
@@ -88,6 +117,11 @@ export default function ContactUsTab({ onClose }: ContactUsProps) {
             </p>
           </div>
 
+          {/* Supplementary Mid Page Ad Square */}
+          <div className="w-full flex justify-center py-4 my-2 border-y border-slate-900/45 bg-slate-950/20 rounded-2xl" id="contact-mid-square-ad">
+            <AdBanner adKey="c5bdb30469010828e32529cd44eafd76" format="iframe" height={250} width={300} label="RECOMMENDED ADVERTISEMENT" />
+          </div>
+
           <div className="space-y-3">
             <h4 className="text-sm font-display font-semibold text-slate-200 flex items-center gap-2">
               <Zap className="h-4 w-4 text-amber-400" />
@@ -119,6 +153,23 @@ export default function ContactUsTab({ onClose }: ContactUsProps) {
         </div>
 
       </div>
+
+      {/* Embedded High Value Large Square Ad Banner optimized for all devices */}
+      <div className="w-full flex justify-center my-6 py-2" id="contact-bottom-square-ad">
+        <AdBanner adKey="c5bdb30469010828e32529cd44eafd76" format="iframe" height={250} width={300} label="SPONSORED TOPIC" />
+      </div>
+
+      {/* Back button container */}
+      {onClose && (
+        <div className="flex justify-end pt-4 border-t border-slate-800">
+          <button 
+            onClick={onClose}
+            className="text-xs bg-indigo-600/10 border border-indigo-500/20 text-indigo-400 hover:bg-indigo-600/20 px-5 py-2.5 rounded-xl transition duration-150 cursor-pointer flex items-center gap-1.5 font-bold animate-pulse"
+          >
+            ← Back to Timing Tools
+          </button>
+        </div>
+      )}
 
     </div>
   );

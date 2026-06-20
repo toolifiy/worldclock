@@ -1,0 +1,9 @@
+# ============================================================================
+# PRODUCTION ADS.TXT - COMPLIANT MONETIZATION AUTHORIZATION RULES
+# ============================================================================
+google.com, pub-9024031763424096, DIRECT, f08c47fec0942fa0
+highperformanceformat.com, b0637172fae007d3, DIRECT, ce8c338e3251c11d
+adsterra.com, ce8c338e3251c11d, DIRECT, ce8c338e3251c11d
+propellerads.com, 25a176e01aef076d, DIRECT, ce8c338e1aef9762
+monetag.com, ffa07df82ac97103, DIRECT, de89b12aef897103
+# ============================================================================

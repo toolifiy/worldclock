@@ -1,5 +1,6 @@
 import React from 'react';
-import { Shield, EyeOff, Lock, Database } from 'lucide-react';
+import { Shield, EyeOff, Lock, Database, ArrowLeft } from 'lucide-react';
+import AdBanner from './AdBanner';
 
 interface PrivacyPolicyProps {
   onClose: () => void;
@@ -8,19 +9,43 @@ interface PrivacyPolicyProps {
 export default function PrivacyPolicyTab({ onClose }: PrivacyPolicyProps) {
   return (
     <div className="space-y-6" id="privacy-policy-hull text-left">
-      <div className="flex items-center justify-between border-b border-slate-900 pb-3">
+      <div className="flex items-center gap-3 border-b border-slate-900 pb-3">
+        <button 
+          onClick={onClose}
+          className="p-2 sm:p-2.5 rounded-xl bg-slate-900/60 border border-slate-800 text-slate-400 hover:text-slate-100 hover:bg-slate-900 hover:border-slate-700 transition duration-150 cursor-pointer flex items-center justify-center shrink-0"
+          title="Back to Timing Tools"
+          id="privacy-back-btn"
+        >
+          <ArrowLeft className="h-4 w-4" />
+        </button>
         <div className="text-left">
-          <h3 className="text-xl font-display font-semibold text-slate-100">Privacy Policy & Data Security</h3>
-          <p className="text-xs text-slate-500">Effective Date: June 19, 2026 | Standard Global Compliance</p>
+          <h3 className="text-lg sm:text-xl font-display font-semibold text-slate-100">Privacy Policy & Data Security</h3>
+          <p className="text-[10px] sm:text-xs text-slate-500">Effective Date: June 19, 2026 | Standard Global Compliance</p>
         </div>
       </div>
 
-      <div className="space-y-4 max-h-[350px] overflow-y-auto pr-2 text-xs text-slate-400 leading-relaxed custom-scrollbar text-left">
+      {/* Embedded Responsive Leaderboard Ad Header optimized for PC/Mobile/Tablet */}
+      <div className="w-full flex justify-center animate-fade-in my-4" id="privacy-top-leaderboard-ad">
+        {/* Phone display */}
+        <div className="block sm:hidden">
+          <AdBanner adKey="ccade14074ab6047bdcd6acbf921dc1d" format="iframe" height={50} width={320} label="SPONSORED广告" hideBorder compact />
+        </div>
+        {/* Tablet display */}
+        <div className="hidden sm:block md:hidden">
+          <AdBanner adKey="db3a79e12aa161ce3f5a8e4e34162c60" format="iframe" height={60} width={468} label="SPONSORED广告" hideBorder compact />
+        </div>
+        {/* Desktop/Big screen display */}
+        <div className="hidden md:block">
+          <AdBanner adKey="d75dbe355ad5fd66241106d0dab90b09" format="iframe" height={90} width={728} label="SPONSORED广告" hideBorder compact />
+        </div>
+      </div>
+
+      <div className="space-y-6 text-slate-400 text-xs sm:text-sm leading-relaxed text-left font-sans">
         
         {/* Core highlight bar */}
-        <div className="p-3 rounded-xl bg-emerald-500/5 border border-emerald-500/15 flex gap-3 text-slate-200">
+        <div className="p-3.5 rounded-2xl bg-emerald-500/5 border border-emerald-500/15 flex gap-3 text-slate-200">
           <Shield className="h-5 w-5 text-emerald-400 shrink-0 self-start animate-pulse" />
-          <p className="text-[11px] text-left">
+          <p className="text-[11px] sm:text-xs text-left">
             <strong>Zero Server Storage & Complete User Discretion:</strong> All stopwatch laps, timesheets, and custom countdown parameters are exclusively persisted inside your browser's local sandbox (<em>localStorage</em>). We never transmit, gather, or upload your records to separate server caches.
           </p>
         </div>
@@ -40,7 +65,7 @@ export default function PrivacyPolicyTab({ onClose }: PrivacyPolicyProps) {
           <p>
             The application tracks custom setup configuration markers purely through your device's browser register space. This local sandbox stores the following:
           </p>
-          <ul className="list-disc pl-5 space-y-1.5 text-[11px] text-slate-500">
+          <ul className="list-disc pl-5 space-y-1.5 text-[11px] sm:text-xs text-slate-500">
             <li><strong>Laps & Timesheets:</strong> Lists of logged splits, durations, and text descriptions aligned with task logs.</li>
             <li><strong>Timer Settings:</strong> Your customized hours, minutes, and seconds, along with preferred sound alert choices.</li>
             <li><strong>World Clock Pinned Locations:</strong> The list of specific city timezone regions you have selected to follow.</li>
@@ -49,6 +74,11 @@ export default function PrivacyPolicyTab({ onClose }: PrivacyPolicyProps) {
           <p>
             This data never leaves your device. However, please note that if you manually clear your browser's site data, execute hard cache wipes, or use private browsing / incognito windows that automatically flush memory states, these configurations will be wiped. This is why we have implemented direct, instant CSV exports so you can backup your records.
           </p>
+        </div>
+
+        {/* Supplementary Mid Page Ad Square - High CPC monetization impact */}
+        <div className="w-full flex justify-center py-4 my-4 border-y border-slate-900/40 bg-slate-950/20 rounded-2xl" id="privacy-mid-square-ad-1">
+          <AdBanner adKey="c5bdb30469010828e32529cd44eafd76" format="iframe" height={250} width={300} label="RECOMMENDED PROMOTION" />
         </div>
 
         <div className="space-y-2">
@@ -71,6 +101,11 @@ export default function PrivacyPolicyTab({ onClose }: PrivacyPolicyProps) {
           </p>
         </div>
 
+        {/* Second Supplementary Mid Page Ad Square - Higher user scroll conversions */}
+        <div className="w-full flex justify-center py-4 my-4 border-y border-slate-900/40 bg-slate-950/20 rounded-2xl" id="privacy-mid-square-ad-2">
+          <AdBanner adKey="c5bdb30469010828e32529cd44eafd76" format="iframe" height={250} width={300} label="SPONSORED SEARCH RESULT" />
+        </div>
+
         <div className="space-y-2">
           <h4 className="text-sm font-semibold text-slate-200 font-display">5. Third-Party Links & Social Channels</h4>
           <p>
@@ -85,6 +120,11 @@ export default function PrivacyPolicyTab({ onClose }: PrivacyPolicyProps) {
           </p>
         </div>
 
+      </div>
+
+      {/* Embedded High Value Large Square Ad Banner optimized for all devices */}
+      <div className="w-full flex justify-center my-6 py-2" id="privacy-bottom-square-ad">
+        <AdBanner adKey="c5bdb30469010828e32529cd44eafd76" format="iframe" height={250} width={300} label="SPONSORED TOPIC" />
       </div>
 
       <div className="flex justify-end pt-4 border-t border-slate-900">
