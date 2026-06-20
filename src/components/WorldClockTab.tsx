@@ -127,6 +127,22 @@ const getTimezoneCities = (zone: string): string[] => {
   }
 };
 
+const getFriendlyTimezoneName = (zone: string): string => {
+  try {
+    const matched = PRESET_TIMEZONES.find(p => p.zone === zone);
+    if (matched) {
+      return matched.name.split(' (')[0];
+    }
+    const parts = zone.split('/');
+    if (parts.length > 1) {
+      return parts[parts.length - 1].replace(/_/g, ' ');
+    }
+    return zone;
+  } catch {
+    return zone;
+  }
+};
+
 export default function WorldClockTab({ soundEnabled }: WorldClockTabProps) {
   const [now, setNow] = useState<Date>(new Date());
   const [showAddCityDrawer, setShowAddCityDrawer] = useState<boolean>(false);
@@ -397,8 +413,11 @@ export default function WorldClockTab({ soundEnabled }: WorldClockTabProps) {
       {/* Current User Browser Local Location Display Card */}
       <div className="mb-6">
         <span className="text-[10px] uppercase font-mono tracking-widest text-slate-500 block mb-2 flex items-center gap-1.5">
-          <MapPin className="h-3 w-3 text-emerald-400" />
-          {selectedCity ? 'Selected Location timezone' : 'Active Browser Location'}
+          <span className="relative flex h-2 w-2">
+            <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-emerald-400 opacity-75"></span>
+            <span className="relative inline-flex rounded-full h-2 w-2 bg-emerald-500"></span>
+          </span>
+          {selectedCity ? 'Selected Location timezone' : 'Your Geo-Detected Local Time (Synchronized)'}
         </span>
         <div className="bg-slate-900/40 border border-indigo-500/10 rounded-2xl p-6 md:p-8 shadow-lg relative overflow-hidden" id="local-clock-card">
           <div className="absolute top-0 right-0 h-40 w-40 bg-indigo-600/5 rounded-full blur-2xl pointer-events-none" />
@@ -431,19 +450,19 @@ export default function WorldClockTab({ soundEnabled }: WorldClockTabProps) {
                     transition={{ duration: 0.5, ease: 'easeOut' }}
                   />
                 </svg>
-
+ 
                 {/* Internal Center Time & Icons */}
                 <div className="absolute flex flex-col items-center justify-center text-center p-2">
                   {/* Sun or Moon with label inside circle */}
                   <span className="text-[10px] font-bold text-slate-400 flex items-center gap-1.5 mb-1 bg-slate-900 px-2 py-0.5 rounded-full border border-slate-800">
                     {activeTimeInfo.isNight ? '🌙 Night' : '☀️ Day'}
                   </span>
-
+ 
                   {/* Dynamic 24-Hr Time display */}
                   <span className="text-2xl text-slate-100 font-bold tracking-tight glow-active font-mono leading-none">
                     {activeTimeInfo.time24}
                   </span>
-
+ 
                   {/* Slightly smaller 12-hour AM/PM text display */}
                   <span className="text-[11px] text-indigo-400 font-bold font-mono bg-indigo-950/20 px-2 py-0.5 rounded border border-indigo-900/30 mt-1.5">
                     {activeTimeInfo.time12}
@@ -451,7 +470,7 @@ export default function WorldClockTab({ soundEnabled }: WorldClockTabProps) {
                 </div>
               </div>
             </div>
-
+ 
             {/* Right Column: Information fields layout (Evening, Week Day, Month, Year details) */}
             <div className="flex-1 flex flex-col justify-between w-full space-y-4">
               
@@ -468,7 +487,7 @@ export default function WorldClockTab({ soundEnabled }: WorldClockTabProps) {
                     </button>
                   )}
                   <h2 className="text-xl sm:text-2xl font-display font-medium text-indigo-400 self-center">
-                    {selectedCity ? `${selectedCity.name} Timezone` : 'Your Local Timezone'}
+                    {selectedCity ? `${selectedCity.name} Timezone` : `Your Local Time (${getFriendlyTimezoneName(localTimeInfo.timezone)})`}
                   </h2>
                 </div>
                 <div className="flex flex-wrap items-center gap-2">
