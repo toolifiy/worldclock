@@ -42,9 +42,13 @@ export default function StopwatchTab({ soundEnabled, shortcutsEnabled, activeTab
     const currentOverall = accumulatedTimeRef.current + elapsed;
     setTime(currentOverall);
 
-    // Audio click ticker (highly responsive woodpecker fast-tap playing on every frame)
+    // Audio click ticker (plays once per second when the second changes)
     if (soundEnabled) {
-      audioEngine.playWoodpeckerTick();
+      const currentSecond = Math.floor(currentOverall / 1000);
+      if (currentSecond > lastTickSecondRef.current) {
+        audioEngine.playTick();
+        lastTickSecondRef.current = currentSecond;
+      }
     }
     
     rafRef.current = requestAnimationFrame(tick);

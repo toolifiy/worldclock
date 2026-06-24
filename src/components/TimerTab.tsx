@@ -97,11 +97,11 @@ export default function TimerTab({ soundEnabled, shortcutsEnabled = true, active
   const circumference = 2 * Math.PI * radius; // ~691.15
   const isFinalPhase = !isSetupState && remainingSeconds > 0 && remainingSeconds <= 5;
 
-  const strokeDashoffset = useMemo(() => {
-    if (totalSeconds <= 0) return circumference; // Start fully empty
-    
-    const ratio = (totalSeconds - remainingSeconds) / totalSeconds; // Ratio of time elapsed (starts at 0, ends at 1)
-    return circumference - (ratio * circumference);
+  const dynamicDasharray = useMemo(() => {
+    if (totalSeconds <= 0) return `0 ${circumference}`;
+    const ratio = remainingSeconds / totalSeconds;
+    const activeLength = ratio * circumference;
+    return `${activeLength} ${circumference}`;
   }, [remainingSeconds, totalSeconds, circumference]);
 
   // Audio completion loop - deactivated
@@ -466,12 +466,12 @@ export default function TimerTab({ soundEnabled, shortcutsEnabled = true, active
                             : 'stroke-amber-500'
                       }`}
                       strokeWidth="6"
-                      strokeDasharray={circumference}
-                      strokeDashoffset={strokeDashoffset}
+                      strokeDasharray={dynamicDasharray}
+                      strokeDashoffset={0}
                       strokeLinecap="round"
                       style={{
-                        transition: isFinalPhase ? 'stroke-dashoffset 1000ms linear' : isRunning ? 'stroke-dashoffset 1s linear' : 'stroke-dashoffset 0.3s ease-out',
-                        willChange: 'stroke-dashoffset'
+                        transition: isFinalPhase ? 'stroke-dasharray 1000ms linear' : isRunning ? 'stroke-dasharray 1s linear' : 'stroke-dasharray 0.3s ease-out',
+                        willChange: 'stroke-dasharray'
                       }}
                     />
                   </svg>
